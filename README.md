@@ -51,10 +51,10 @@ Bu proje, PHP ve MySQL kullanılarak geliştirilmiş basit bir bijuteri mağazas
 
 ## 🧪 Kurulum
 
-1. `htdocs` içine projeyi kopyalayın.
+1. htdocs içine projeyi kopyalayın.
 2. XAMPP üzerinden Apache ve MySQL’i başlatın.
-3. `veritabani.sql` dosyasını phpMyAdmin üzerinden içe aktarın.
-4. `http://localhost/bijuteri/giris.php` adresinden projeyi başlatın.
+3. veritabani.sql dosyasını phpMyAdmin üzerinden içe aktarın.
+4. http://localhost/bijuteri/giris.php adresinden projeyi başlatın.
 
 ## 👥 Geliştirici
 
