@@ -66,3 +66,12 @@ Bu proje, PHP ve MySQL kullanılarak geliştirilmiş basit bir bijuteri mağazas
 ## 📄 Lisans
 
 Bu proje eğitim amaçlı hazırlanmıştır. Herhangi bir ticari kullanım için uygun değildir.
+
+Bu proje yalnızca kişisel kullanım ve referans amacıyla paylaşılmıştır.  
+Ticari, akademik veya bireysel herhangi bir projede kullanılması yasaktır.  
+Kodların tamamı veya bir kısmı izinsiz olarak kopyalanamaz, dağıtılamaz, çoğaltılamaz veya türetilmiş çalışmalar oluşturulamaz.
+
+Telif Hakkı ©[2025] Goske1,EmreYildan,EmirhanBikmaz
+
+Tüm hakları saklıdır.
+
