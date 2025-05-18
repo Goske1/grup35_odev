@@ -5,7 +5,7 @@ Bu proje, PHP ve MySQL kullanılarak geliştirilmiş basit bir bijuteri mağazas
 ## 📁 Klasör Yapısı
  Admin/  
     ├─ admin.panel.php      → Yönetici ana paneli 
-    ├─ admin.giris.php    	→ Yönetici girişi 
+    ├─ admin.giris.php     	→ Yönetici girişi 
     ├─ admin.kayit.php      → Yönetici kaydı 
     ├─ admin.cikis.php     	→ Yönetici çıkışı  
     └─ admin.duzenle/       → Yönetici düzen işlemleri 
@@ -40,7 +40,7 @@ Bu proje, PHP ve MySQL kullanılarak geliştirilmiş basit bir bijuteri mağazas
     ├─ profil.php           → Kullanıcı profili 
     ├─ siparislerim.php     → Sipariş geçmişi 
     ├─ siparis.durum.php    → Sipariş durumu 
-    ├─ urun.arama.php		    → Ürün arama
+    ├─ urun.arama.php		     → Ürün arama
 
 ## ⚙️ Teknolojiler
 
@@ -58,7 +58,10 @@ Bu proje, PHP ve MySQL kullanılarak geliştirilmiş basit bir bijuteri mağazas
 
 ## 👥 Geliştirici
 
-- Grup 35 - Veri Tabanı Dersi
+- Grup 35
+- Göksel Bekdemir
+- Emre Yasin Yıldan
+- Emirhan Bıkmaz
 
 ## 📄 Lisans
 
