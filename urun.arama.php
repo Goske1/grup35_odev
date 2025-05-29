@@ -16,8 +16,8 @@ if ($arama) {
               /* sonuçları 20 olarak lımıtle performans ıcın alanı */
               LIMIT 10";
     $stmt = mysqli_prepare($baglanti, $sorgu);
-    $like = $arama . '%'; // Bytre yoluyla index kullanmak için yandaki satırı kullanabilirsin
-    // $like = '%' . $arama . '%'; // Eğer arama içinde de arama yapmak istiyorsan
+    //$like = $arama . '%'; // Btree yoluyla index kullanmak için yandaki satırı kullanabilirsin
+      $like = '%' . $arama . '%'; 
     mysqli_stmt_bind_param($stmt, "s", $like);
     mysqli_stmt_execute($stmt);
     $sonuc = mysqli_stmt_get_result($stmt);

@@ -1,0 +1,1 @@
+Bu Web Siteisnde kullandığınız herhangi bir veri 3. şahıs eline geçmeyecektir..

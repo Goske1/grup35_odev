@@ -169,10 +169,11 @@ if (!isset($_SESSION["musteri_id"])) {
                                 <i class="fas fa-user-circle me-1"></i>
                                 <?= htmlspecialchars($_SESSION["kullanici_ad_soyad"]) ?>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="../profil.php"><i class="fas fa-user me-2"></i>Profilim</a></li>
-                                <li><a class="dropdown-item" href="../siparis.durum.php"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
+                                <li><a class="dropdown-item" href="../siparişlerim.php"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
                                 <li><a class="dropdown-item" href="../favori/favorilerim.php"><i class="fas fa-heart me-2"></i>Favorilerim</a></li>
+                                <li><a class="dropdown-item" href="../Destek/destek.talepleri.php"><i class="fas fa-headset me-2"></i>Destek Taleplerim</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="../çikis.php"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                             </ul>
@@ -268,7 +269,7 @@ if (!isset($_SESSION["musteri_id"])) {
             <div class="col-md-4">
                 <h5>Hızlı Linkler</h5>
                 <ul class="list-unstyled">
-                    <li><a href="#" class="text-light">Gizlilik Politikası</a></li>
+                    <li><a href="Hızlı Linkler/Gizlilik Politikası.txt" class="text-light">Gizlilik Politikası</a></li>
                     <li><a href="#" class="text-light">İade Koşulları</a></li>
                     <li><a href="#" class="text-light">İletişim</a></li>
                 </ul>
@@ -276,7 +277,7 @@ if (!isset($_SESSION["musteri_id"])) {
             <div class="col-md-4">
                 <h5>Bizi Takip Edin</h5>
                 <div class="social-links">
-                    <a href="#" class="text-light me-2"><i class="fab fa-facebook"></i></a>
+                    <a href="Hızlı Linkler/Gizlilik Politikası.txt" class="text-light me-2"><i class="fab fa-facebook"></i></a>
                     <a href="#" class="text-light me-2"><i class="fab fa-instagram"></i></a>
                     <a href="#" class="text-light me-2"><i class="fab fa-twitter"></i></a>
                 </div>

@@ -172,10 +172,11 @@ mysqli_stmt_close($yorum_sorgu);
                                 <i class="fas fa-user-circle me-1"></i>
                                 <?= htmlspecialchars($_SESSION["kullanici_ad_soyad"]) ?>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="../profil.php"><i class="fas fa-user me-2"></i>Profilim</a></li>
-                                <li><a class="dropdown-item" href="../siparis.durum.php"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
+                                <li><a class="dropdown-item" href="../siparişlerim.php"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
                                 <li><a class="dropdown-item" href="../favori/favorilerim.php"><i class="fas fa-heart me-2"></i>Favorilerim</a></li>
+                                <li><a class="dropdown-item" href="../Destek/destek.talepleri.php"><i class="fas fa-headset me-2"></i>Destek Taleplerim</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger" href="../çikis.php"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                             </ul>
@@ -303,6 +304,12 @@ mysqli_stmt_close($yorum_sorgu);
                                 <?php for ($i = $yorum['kullanici_puan']; $i < 5; $i++) echo "☆"; ?>
                                 - <?php echo date('d.m.Y H:i', strtotime($yorum['kullanici_yorum_tarihi'])); ?>
                             </small>
+                            <?php if (!empty($yorum['admin_cevap'])): ?>
+    <div class="mt-2 p-2 bg-light border rounded">
+        <strong>Mağaza Yanıtı:</strong>
+        <p class="mb-0"><?= nl2br(htmlspecialchars($yorum['admin_cevap'])) ?></p>
+    </div>
+<?php endif; ?>
                         </div>
                     <?php endforeach; ?>
                 </div>

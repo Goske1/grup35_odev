@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 include("baglanti.php");
 
@@ -9,22 +8,57 @@ if (!isset($_SESSION["musteri_id"])) {
 }
 
 $musteri_id = $_SESSION["musteri_id"];
+$arama = $_GET['arama'] ?? '';
+$sayfa = isset($_GET['sayfa']) ? max(1, intval($_GET['sayfa'])) : 1;
+$limit = 10;
+$baslangic = ($sayfa - 1) * $limit;
 
-// Siparişleri çekmek için veritabanı sorgusu kullandık
-$sorgu = mysqli_prepare($baglanti, "SELECT s.siparis_id, s.siparis_tarihi, s.toplam_tutar, s.durum, a.musteri_adres 
-    FROM siparisler s 
-    LEFT JOIN adresler a ON s.adres_id = a.adres_id 
-    WHERE s.musteri_id = ? 
-    ORDER BY s.siparis_tarihi DESC");
-mysqli_stmt_bind_param($sorgu, "i", $musteri_id);
-mysqli_stmt_execute($sorgu);
-$sonuc = mysqli_stmt_get_result($sorgu);
-
-$siparisler = [];
-while ($row = mysqli_fetch_assoc($sonuc)) {
-    $siparisler[] = $row;
+// Durum güncelleme işlemi
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["siparis_id"], $_POST["yeni_durum"])) {
+    $siparis_id = intval($_POST["siparis_id"]);
+    $yeni_durum = $_POST["yeni_durum"];
+    // Sadece adminler veya ilgili müşteri güncelleyebilsin diye kontrol ekleyebilirsin
+    $guncelle = mysqli_prepare($baglanti, "UPDATE siparisler SET durum=? WHERE siparis_id=? AND musteri_id=?");
+    mysqli_stmt_bind_param($guncelle, "sii", $yeni_durum, $siparis_id, $musteri_id);
+    mysqli_stmt_execute($guncelle);
+    mysqli_stmt_close($guncelle);
+    // Sayfayı yenile
+    header("Location: siparis.durum.php?sayfa=$sayfa&arama=" . urlencode($arama));
+    exit;
 }
-mysqli_stmt_close($sorgu);
+
+// Toplam sipariş sayısı (arama varsa ona göre)
+if ($arama) {
+    $toplam_sorgu = mysqli_prepare($baglanti, "SELECT COUNT(*) as sayi FROM siparisler WHERE musteri_id=? AND siparis_id LIKE ?");
+    $like = "%$arama%";
+    mysqli_stmt_bind_param($toplam_sorgu, "is", $musteri_id, $like);
+    mysqli_stmt_execute($toplam_sorgu);
+    $toplam_sonuc = mysqli_stmt_get_result($toplam_sorgu);
+    $toplam_sayi = mysqli_fetch_assoc($toplam_sonuc)['sayi'];
+    mysqli_stmt_close($toplam_sorgu);
+} else {
+    $toplam_sorgu = mysqli_prepare($baglanti, "SELECT COUNT(*) as sayi FROM siparisler WHERE musteri_id=?");
+    mysqli_stmt_bind_param($toplam_sorgu, "i", $musteri_id);
+    mysqli_stmt_execute($toplam_sorgu);
+    $toplam_sonuc = mysqli_stmt_get_result($toplam_sorgu);
+    $toplam_sayi = mysqli_fetch_assoc($toplam_sonuc)['sayi'];
+    mysqli_stmt_close($toplam_sorgu);
+}
+$toplam_sayfa = ceil($toplam_sayi / $limit);
+
+// Siparişleri çek
+if ($arama) {
+    $sorgu = "SELECT * FROM siparisler WHERE musteri_id=? AND siparis_id LIKE ? ORDER BY siparis_tarihi DESC LIMIT ?, ?";
+    $stmt = mysqli_prepare($baglanti, $sorgu);
+    $like = "%$arama%";
+    mysqli_stmt_bind_param($stmt, "isii", $musteri_id, $like, $baslangic, $limit);
+} else {
+    $sorgu = "SELECT * FROM siparisler WHERE musteri_id=? ORDER BY siparis_tarihi DESC LIMIT ?, ?";
+    $stmt = mysqli_prepare($baglanti, $sorgu);
+    mysqli_stmt_bind_param($stmt, "iii", $musteri_id, $baslangic, $limit);
+}
+mysqli_stmt_execute($stmt);
+$sonuc = mysqli_stmt_get_result($stmt);
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -36,47 +70,59 @@ mysqli_stmt_close($sorgu);
 <body>
 <div class="container py-5">
     <h2>Siparişlerim</h2>
-    <?php if (count($siparisler) == 0): ?>
+    <form method="get" class="mb-3">
+        <input type="text" name="arama" placeholder="Sipariş No ile ara" value="<?= htmlspecialchars($arama) ?>" class="form-control d-inline" style="width:200px;">
+        <button type="submit" class="btn btn-primary btn-sm">Ara</button>
+    </form>
+    <?php if (mysqli_num_rows($sonuc) == 0): ?>
         <div class="alert alert-info">Henüz hiç siparişiniz yok.</div>
     <?php else: ?>
-        <?php foreach ($siparisler as $siparis): ?>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <strong>Sipariş No:</strong> <?= $siparis['siparis_id'] ?> |
-                    <strong>Tarih:</strong> <?= $siparis['siparis_tarihi'] ?> |
-                    <strong>Durum:</strong> <?= $siparis['durum'] ?>
-                </div>
-                <div class="card-body">
-                    <p><strong>Teslimat Adresi:</strong> <?= htmlspecialchars($siparis['musteri_adres']) ?></p>
-                    <p><strong>Toplam Tutar:</strong> <?= number_format($siparis['toplam_tutar'], 2) ?> ₺</p>
-                    <h6>Sipariş Ürünleri:</h6>
-                    <ul>
-                        <?php
-                        $urun_sorgu = mysqli_prepare($baglanti, "SELECT u.urun_ad, su.siparis_adet, su.siparis_birim_fiyat 
-                            FROM siparis_urunleri su 
-                            JOIN urunler u ON su.urun_id = u.urun_id 
-                            WHERE su.siparis_id = ?");
-                        mysqli_stmt_bind_param($urun_sorgu, "i", $siparis['siparis_id']);
-                        mysqli_stmt_execute($urun_sorgu);
-                        $urun_sonuc = mysqli_stmt_get_result($urun_sorgu);
-                        if (mysqli_num_rows($urun_sonuc) == 0): ?>
-                            <li>Bu siparişte ürün bulunamadı.</li>
-                        <?php else:
-                            while ($urun = mysqli_fetch_assoc($urun_sonuc)): ?>
-                                <li>
-                                    <?= htmlspecialchars($urun['urun_ad']) ?> -
-                                    <?= $urun['siparis_adet'] ?> adet -
-                                    <?= number_format($urun['siparis_birim_fiyat'], 2) ?> ₺
-                                </li>
-                            <?php endwhile;
-                        endif;
-                        mysqli_stmt_close($urun_sorgu);
-                        ?>
-                    </ul>
-                </div>
-            </div>
-        <?php endforeach; ?>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Sipariş No</th>
+                    <th>Tarih</th>
+                    <th>Tutar</th>
+                    <th>Durum</th>
+                    <th>Durum Güncelle</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($siparis = mysqli_fetch_assoc($sonuc)): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($siparis['siparis_id']) ?></td>
+                        <td><?= htmlspecialchars($siparis['siparis_tarihi']) ?></td>
+                        <td><?= htmlspecialchars($siparis['toplam_tutar']) ?> ₺</td>
+                        <td><?= htmlspecialchars($siparis['durum']) ?></td>
+                        <td>
+                            <form method="post" class="d-flex align-items-center gap-2">
+                                <input type="hidden" name="siparis_id" value="<?= $siparis['siparis_id'] ?>">
+                                <select name="yeni_durum" class="form-select form-select-sm" required>
+                                    <?php
+                                    $durumlar = ['Hazırlanıyor', 'Kargoya Verildi', 'Teslim Edildi', 'İptal Edildi'];
+                                    foreach ($durumlar as $durum):
+                                    ?>
+                                        <option value="<?= $durum ?>" <?= $siparis['durum'] == $durum ? 'selected' : '' ?>><?= $durum ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-success">Güncelle</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     <?php endif; ?>
+    <!-- Sayfalama -->
+    <nav>
+        <ul class="pagination">
+            <?php for ($i = 1; $i <= $toplam_sayfa; $i++): ?>
+                <li class="page-item <?= $i == $sayfa ? 'active' : '' ?>">
+                    <a class="page-link" href="?sayfa=<?= $i ?>&arama=<?= urlencode($arama) ?>"><?= $i ?></a>
+                </li>
+            <?php endfor; ?>
+        </ul>
+    </nav>
     <a href="anasayfa.php" class="btn btn-secondary">Anasayfaya Dön</a>
 </div>
 </body>

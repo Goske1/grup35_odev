@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Anamakine: 127.0.0.1
--- Üretim Zamanı: 18 May 2025, 20:21:59
+-- Üretim Zamanı: 24 May 2025, 23:15:43
 -- Sunucu sürümü: 10.4.32-MariaDB
--- PHP Sürümü: 8.0.30
+-- PHP Sürümü: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -37,7 +37,7 @@ CREATE TABLE `adminler` (
 --
 
 INSERT INTO `adminler` (`admin_id`, `admin_ad_soyad`, `admin_eposta`, `admin_parola`, `admin_telefon`, `admin_kayit_tarihi`, `aktif`, `admin_last_login`) VALUES
-(1, 'admin', 'admin@gmail.com', '$2y$10$RhiwVgYe5ESwnkxpTPnHkeCDWPgWL/YI8OkBitlZ9SO0X9gjvarvW', '1', '2025-05-17 19:41:32', 1, '2025-05-18 14:15:58'),
+(1, 'admin', 'admin@gmail.com', '$2y$10$RhiwVgYe5ESwnkxpTPnHkeCDWPgWL/YI8OkBitlZ9SO0X9gjvarvW', '1', '2025-05-17 19:41:32', 1, '2025-05-25 00:14:20'),
 (2, 'Emirhan Bıkmaz', 'emirhanbk00@gmail.com', '$2y$10$8Z1lWXdnIzPjMCmbwzILjevFUkNPidQrlHIYN1a8t5DvZdEfkruEq', '5372700393', '2025-05-18 15:57:43', 1, '2025-05-18 20:12:24');
 
 -- --------------------------------------------------------
@@ -60,7 +60,76 @@ INSERT INTO `adresler` (`adres_id`, `musteri_id`, `musteri_adres`) VALUES
 (1, 1, 'KanlıcaZ/Beykoz İstanbul'),
 (2, 1, 'Kanlıca /Beykoz /Istanbul'),
 (6, 1, 'KOCAELİ/IZMIT'),
-(7, 3, 'Emir');
+(7, 3, 'Emir'),
+(8, 1, 'Luvi Adrasan Bungalov Evleri/Adrasan/Kumluca Belediyesi /Antalya'),
+(9, 1, 'Bulut çıkmazı/Kanlıca/Beykoz /Istanbul'),
+(10, 1, ''),
+(11, 1, 'fsdafasdf'),
+(12, 1, 'fsdfdasfa'),
+(13, 1, 'sadfsafdsafsad'),
+(14, 1, 'sdafdsafsadf'),
+(15, 1, 'sdfsfsafasdfsadf'),
+(16, 1, 'dafsaf');
+
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `destek_mesajlari`
+--
+
+CREATE TABLE `destek_mesajlari` (
+  `mesaj_id` int(11) NOT NULL,
+  `talep_id` int(11) NOT NULL,
+  `gonderen` enum('musteri','yetkili') NOT NULL,
+  `mesaj` text NOT NULL,
+  `mesaj_tarihi` datetime DEFAULT current_timestamp(),
+  `okundu` tinyint(1) DEFAULT 0,
+  `ek` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Tablo döküm verisi `destek_mesajlari`
+--
+
+INSERT INTO `destek_mesajlari` (`mesaj_id`, `talep_id`, `gonderen`, `mesaj`, `mesaj_tarihi`, `okundu`, `ek`) VALUES
+(2, 2, 'yetkili', 'Merhaba ürününüzü kargoya verdik', '2025-05-24 11:18:30', 1, NULL),
+(3, 2, 'musteri', 'Tamamdır çok teşekkür ederim', '2025-05-24 11:40:01', 1, NULL),
+(4, 2, 'yetkili', 'tekrar alışveriş vermeniz dileğiyle', '2025-05-24 11:43:16', 1, NULL),
+(5, 2, 'yetkili', 'tekrar alışveriş vermeniz dileğiyle', '2025-05-24 11:43:27', 1, NULL),
+(6, 2, 'yetkili', 'tekrar alışveriş vermeniz dileğiyle', '2025-05-24 11:43:31', 1, NULL),
+(7, 2, 'musteri', 'tamamdır', '2025-05-24 11:46:35', 1, NULL),
+(8, 2, 'musteri', 'bb', '2025-05-24 11:46:52', 1, NULL),
+(9, 2, 'musteri', 'dfsafa', '2025-05-24 11:53:04', 1, NULL),
+(10, 2, 'musteri', 'yanıt', '2025-05-24 11:54:33', 1, NULL),
+(11, 2, 'musteri', 'sdaf', '2025-05-24 11:55:36', 1, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Tablo için tablo yapısı `destek_talepleri`
+--
+
+CREATE TABLE `destek_talepleri` (
+  `talep_id` int(11) NOT NULL,
+  `musteri_id` int(11) DEFAULT NULL,
+  `ad_soyad` varchar(100) NOT NULL,
+  `eposta` varchar(100) NOT NULL,
+  `konu` varchar(150) NOT NULL,
+  `mesaj` text NOT NULL,
+  `talep_tarihi` datetime DEFAULT current_timestamp(),
+  `durum` enum('Bekliyor','Yanıtlandı','Kapalı') DEFAULT 'Bekliyor',
+  `oncelik` enum('Düşük','Orta','Yüksek') DEFAULT 'Orta',
+  `kategori` varchar(50) DEFAULT NULL,
+  `son_gorulme` datetime DEFAULT NULL,
+  `silindi` tinyint(1) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+--
+-- Tablo döküm verisi `destek_talepleri`
+--
+
+INSERT INTO `destek_talepleri` (`talep_id`, `musteri_id`, `ad_soyad`, `eposta`, `konu`, `mesaj`, `talep_tarihi`, `durum`, `oncelik`, `kategori`, `son_gorulme`, `silindi`) VALUES
+(2, 1, 'Emre Yasin Yıldan', 'emreyildan@gmail.com', 'Ürünüm Gelmedi', 'İlgilenirmisiniz', '2025-05-24 11:08:58', 'Bekliyor', 'Orta', NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -111,17 +180,19 @@ CREATE TABLE `musteriler` (
   `musteri_telefon` varchar(15) DEFAULT NULL,
   `dogum_tarihi` date DEFAULT NULL,
   `cinsiyet` enum('Erkek','Kadın') DEFAULT NULL,
-  `musteri_kayit_tarihi` datetime DEFAULT current_timestamp()
+  `musteri_kayit_tarihi` datetime DEFAULT current_timestamp(),
+  `sifre_sifirla_token` varchar(255) DEFAULT NULL,
+  `sifre_sifirla_son` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Tablo döküm verisi `musteriler`
 --
 
-INSERT INTO `musteriler` (`musteri_id`, `musteri_ad_soyad`, `musteri_eposta`, `musteri_parola`, `musteri_telefon`, `dogum_tarihi`, `cinsiyet`, `musteri_kayit_tarihi`) VALUES
-(1, 'Emre Yasin Yıldan', 'emreyildan@gmail.com', '$2y$10$T2N8glWH7v4AityhoXFcH.V.g3KCn9exuXZk6wEK45FSzn/9iE0dC', '+905339674624', '2005-07-03', 'Erkek', '2025-05-17 13:54:32'),
-(2, 'Emirhan Bıkmaz', 'emirhanbikmaz@gmail.com', '$2y$10$0p7M070xA5Kgo2ZzMaEXfeNCITG0o46InPw0PHPkJN2AbPfK/OR/W', '+905372700393', '2003-03-31', 'Kadın', '2025-05-17 19:05:04'),
-(3, 'Emirhan Bıkmaz', 'emirhanbk00@gmail.com', '$2y$10$ZMUQEjM4xzeAoVrB74xa4.4LZZRaFdxfL4vUQnURmEMHDs1oaA3sy', '+905372700393', '2003-03-03', 'Erkek', '2025-05-18 20:00:24');
+INSERT INTO `musteriler` (`musteri_id`, `musteri_ad_soyad`, `musteri_eposta`, `musteri_parola`, `musteri_telefon`, `dogum_tarihi`, `cinsiyet`, `musteri_kayit_tarihi`, `sifre_sifirla_token`, `sifre_sifirla_son`) VALUES
+(1, 'Emre Yasin Yıldan', 'emreyildan@gmail.com', '$2y$10$QN9riyzWN0nxQMzTIAPWs.wGkzeTs9NfJpGTfDA/BdzSV88qUAaWO', '+905339674624', '2005-07-03', 'Erkek', '2025-05-17 13:54:32', '4e5b1d8f98ff959ee35c92bd3274f8e9a79604182bcf462976cd6ba8222a7a42', '2025-05-25 00:09:40'),
+(2, 'Emirhan Bıkmaz', 'emirhanbikmaz@gmail.com', '$2y$10$0p7M070xA5Kgo2ZzMaEXfeNCITG0o46InPw0PHPkJN2AbPfK/OR/W', '+905372700393', '2003-03-31', 'Kadın', '2025-05-17 19:05:04', NULL, NULL),
+(3, 'Emirhan Bıkmaz', 'emirhanbk00@gmail.com', '$2y$10$ZMUQEjM4xzeAoVrB74xa4.4LZZRaFdxfL4vUQnURmEMHDs1oaA3sy', '+905372700393', '2003-03-03', 'Erkek', '2025-05-18 20:00:24', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -157,7 +228,21 @@ CREATE TABLE `siparisler` (
 --
 
 INSERT INTO `siparisler` (`siparis_id`, `musteri_id`, `adres_id`, `siparis_tarihi`, `toplam_tutar`, `durum`) VALUES
-(8, 3, 7, '2025-05-18 20:15:47', 2290.00, 'Hazırlanıyor');
+(8, 3, 7, '2025-05-18 20:15:47', 2290.00, 'Hazırlanıyor'),
+(9, 1, 8, '2025-05-18 21:35:16', 23730.00, 'Hazırlanıyor'),
+(10, 1, 9, '2025-05-18 21:37:18', 53380.00, 'Hazırlanıyor'),
+(11, 1, 1, '2025-05-18 21:40:41', 2669.00, 'Hazırlanıyor'),
+(12, 1, 1, '2025-05-18 21:42:05', 1190.00, 'Hazırlanıyor'),
+(13, 1, 1, '2025-05-18 21:42:43', 31840.00, 'Hazırlanıyor'),
+(14, 1, 1, '2025-05-18 21:43:48', 9160.00, 'Hazırlanıyor'),
+(15, 1, 1, '2025-05-18 21:45:23', 8250.00, 'Hazırlanıyor'),
+(16, 1, 10, '2025-05-18 21:47:22', 3390.00, 'Hazırlanıyor'),
+(17, 1, 11, '2025-05-18 21:48:25', 29990.00, 'Hazırlanıyor'),
+(18, 1, 12, '2025-05-18 21:49:01', 29990.00, 'Hazırlanıyor'),
+(19, 1, 13, '2025-05-18 21:49:20', 29990.00, 'Hazırlanıyor'),
+(20, 1, 14, '2025-05-18 21:51:10', 29990.00, 'Hazırlanıyor'),
+(21, 1, 15, '2025-05-18 21:51:50', 45800.00, 'Hazırlanıyor'),
+(22, 1, 16, '2025-05-18 23:21:12', 50711.00, 'Hazırlanıyor');
 
 -- --------------------------------------------------------
 
@@ -178,7 +263,21 @@ CREATE TABLE `siparis_urunleri` (
 --
 
 INSERT INTO `siparis_urunleri` (`siparis_urun_id`, `siparis_id`, `urun_id`, `siparis_adet`, `siparis_birim_fiyat`) VALUES
-(11, 8, 52, 1, 2290.00);
+(11, 8, 52, 1, 2290.00),
+(12, 9, 53, 7, 3390.00),
+(13, 10, 49, 20, 2669.00),
+(14, 11, 49, 1, 2669.00),
+(15, 12, 41, 1, 1190.00),
+(16, 13, 50, 4, 7960.00),
+(17, 14, 52, 4, 2290.00),
+(18, 15, 45, 11, 750.00),
+(19, 16, 53, 1, 3390.00),
+(20, 17, 51, 1, 29990.00),
+(21, 18, 51, 1, 29990.00),
+(22, 19, 51, 1, 29990.00),
+(23, 20, 51, 1, 29990.00),
+(24, 21, 52, 20, 2290.00),
+(25, 22, 49, 19, 2669.00);
 
 --
 -- Tetikleyiciler `siparis_urunleri`
@@ -247,16 +346,16 @@ CREATE TABLE `urunler` (
 INSERT INTO `urunler` (`urun_id`, `urun_ad`, `urun_aciklama`, `urun_fiyat`, `urun_stok`, `kategori_id`, `renk`, `marka`, `malzeme`, `beden`, `agirlik`, `tas`, `tas_agirlik`) VALUES
 (39, 'PARLAK TAŞLI YUSUFÇUK KÜPE', 'Parlak taş ve suni inci aplikeli, metal, sallantılı yusufçuk küpe. Arkası iğneli.', 920.00, 23, 4, 'Gümüş Rengi', 'Zara', '', 'Tek', 3.00, '0', 0.00),
 (40, 'METAL HALKALI ZİNCİR KOLYE', '925 MM gümüş kaplama metal halkalı zincir. Çubuk kapamalı', 1190.00, 43, 2, 'Gümüş Rengi', 'Zara', 'gümüş', 'Tek', 15.00, '0', 0.00),
-(41, 'KONTRAST TAŞLI YÜZÜK', 'Kontrast taş aplikeli, metal mühür yüzük. 925 ayar gümüş kaplama.', 1190.00, 52, 1, 'Kahve', 'Zara', 'gümüş', '10', 6.00, '0', 1.00),
+(41, 'KONTRAST TAŞLI YÜZÜK', 'Kontrast taş aplikeli, metal mühür yüzük. 925 ayar gümüş kaplama.', 1190.00, 51, 1, 'Kahve', 'Zara', 'gümüş', '10', 6.00, '0', 1.00),
 (43, 'Guess Kalpli Kadın Bileklik', '925 Ayar Gümüş\r\nBakım ve Paketleme: Parfüm, Alkol, Krem, Çamaşır ve Deniz Suyu gibi maddeler ile temastan kaçınıldığı sürece kararma yapmaz. Kullanılmadığında kutusunda hava almayacak şekilde saklanması tavsiye edilmektedir.', 1159.00, 24, 3, 'Gümüş Renk', 'Guess', 'gümüş', '15', 11.00, '0', 2.00),
-(44, 'KABARTMALI ÇİÇEK KÜPE', 'Kabartmalı çiçek şeklinde metal küpe. Arkası iğneli.', 920.00, 43, 4, 'Kahve,Siyah', 'Zara', 'gümüş', 'Tek', 4.00, '0', 0.00),
-(45, 'BALIKLI HALKA KÜPE', 'Kabartmalı dairesel şekilde işlenmiş metal küpeler. Renkli reçineden yapılmış balık şeklinde kolye ucu. Klipsli ve somunlu kapama.', 750.00, 21, 4, 'Kahve Siyah Altın ', 'Zara', 'altın', 'Tek', 12.00, '0', 0.00),
+(44, 'KABARTMALI ÇİÇEK KÜPE', 'Kabartmalı çiçek şeklinde metal küpe. Arkası iğneli.', 920.00, 43, 4, 'Siyah', 'Zara', 'gümüş', 'Tek', 4.00, '0', 0.00),
+(45, 'BALIKLI HALKA KÜPE', 'Kabartmalı dairesel şekilde işlenmiş metal küpeler. Renkli reçineden yapılmış balık şeklinde kolye ucu. Klipsli ve somunlu kapama.', 750.00, 10, 4, 'Kahve ', 'Zara', 'altın', 'Tek', 12.00, '0', 0.00),
 (46, 'HALKALI BİLEKLİK', 'Metal halkalardan oluşan bileklik. 925 ayar gümüş.', 1990.00, 14, 3, 'Gümüş Renk', 'Zara', 'gümüş', '18cm', 19.00, '0', 0.00),
-(49, 'Pandora Moments Kalp Klipsli Bileklik', 'Bu şık Yılan Zincir Bileklik ile her anı bir Pandora anına dönüştür. 925 ayar gümüş kullanılarak elde tamamlanan ve kalp bir klipse sahip olan bu klasik bileklik çok çeşitli klips ve charm’larla kullanılabilir. Bu çarpıcı bileklik her Pandora mücevheri aşığı için güzel bir seçim ve aynı zamanda sevdiklerine hediye etmen için mükemmel bir seçim.', 2669.00, 220, 3, 'Gümüş Renk', 'Pandora', 'gümüş', '15cm', 100.00, '0', 0.00),
-(50, 'GUESS Gümüş Kadın Kolye', 'Guess 925 Ayar Gümüş Kadın Kolye;Maden:925 Ayar Gümüş  \r\nRenk:Gümüş \r\nEbat:Tek Ebat;\r\nGUESS Kutusunda Gönderilmektedir;\r\nKozmetik, parfüm ve temizlik ürünlerinden uzak tutulması önerilir.', 7960.00, 14, 2, 'Gümüş Renk', 'Guess', 'gümüş', 'Tek', 93.00, '0', 0.00),
-(51, 'Sirius Gümüş Renk 3,38 Karat Pırlanta Tamtur Yüzük', 'Pırlanta Adet: 18 \r\nBerraklık: SI \r\nRenk: Gümüş Renk\r\nYuvarlak Altın Özellikleri: Altın Ayarı: 14 Ayar Renk: Beyaz Altın \r\nSertifikası ve şık kutusunda teslim edilmektedir', 29990.00, 2, 1, 'Gümüş Renk', 'Sirius ', 'gümüş', '10', 2.70, '0', 3.38),
-(52, 'TAŞLI KABARTMALI YÜZÜK', 'Kontrast taş aplikeli, mühür tipi metal yüzük. 925 ayar gümüş .', 2290.00, 26, 1, 'Altıın, Siyah', 'Zara', 'gümüş', '14', 6.00, '1', 0.00),
-(53, '3’LÜ KARMA KOLYE SETİ', 'Üçlü karma kolye seti.\r\n\r\n- Orta uzunlukta, uyumlu boncuklu metal zincir.\r\n- Kontrast boncuklu uzun metal zincir.\r\n- Kontrast boncuklu kolye.', 3390.00, 7, 2, 'Kahve Siyah Altın ', 'Zara', 'gümüş', 'Tek', 123.00, '0', 0.00);
+(49, 'Pandora Moments Kalp Klipsli Bileklik', 'Bu şık Yılan Zincir Bileklik ile her anı bir Pandora anına dönüştür. 925 ayar gümüş kullanılarak elde tamamlanan ve kalp bir klipse sahip olan bu klasik bileklik çok çeşitli klips ve charm’larla kullanılabilir. Bu çarpıcı bileklik her Pandora mücevheri aşığı için güzel bir seçim ve aynı zamanda sevdiklerine hediye etmen için mükemmel bir seçim.', 2669.00, 200, 3, 'Gümüş Renk', 'Pandora', 'gümüş', '15cm', 100.00, '0', 0.00),
+(50, 'GUESS Gümüş Kadın Kolye', 'Guess 925 Ayar Gümüş Kadın Kolye;Maden:925 Ayar Gümüş  \r\nRenk:Gümüş \r\nEbat:Tek Ebat;\r\nGUESS Kutusunda Gönderilmektedir;\r\nKozmetik, parfüm ve temizlik ürünlerinden uzak tutulması önerilir.', 7960.00, 10, 2, 'Gümüş Renk', 'Guess', 'gümüş', 'Tek', 93.00, '0', 0.00),
+(51, 'Sirius Gümüş Renk 3,38 Karat Pırlanta Tamtur Yüzük', 'Pırlanta Adet: 18 \r\nBerraklık: SI \r\nRenk: Gümüş Renk\r\nYuvarlak Altın Özellikleri: Altın Ayarı: 14 Ayar Renk: Beyaz Altın \r\nSertifikası ve şık kutusunda teslim edilmektedir', 29990.00, 1, 1, 'Gümüş Renk', 'Sirius ', 'gümüş', '10', 2.70, '0', 3.38),
+(52, 'TAŞLI KABARTMALI YÜZÜK', 'Kontrast taş aplikeli, mühür tipi metal yüzük. 925 ayar gümüş .', 2290.00, 2, 1, 'Altın', 'Zara', 'gümüş', '14', 6.00, '1', 0.00),
+(53, '3’LÜ KARMA KOLYE SETİ', 'Üçlü karma kolye seti.\r\n\r\n- Orta uzunlukta, uyumlu boncuklu metal zincir.\r\n- Kontrast boncuklu uzun metal zincir.\r\n- Kontrast boncuklu kolye.', 3390.00, 7, 2, 'Kahve ', 'Zara', 'gümüş', 'Tek', 123.00, '0', 0.00);
 
 --
 -- Tetikleyiciler `urunler`
@@ -356,7 +455,25 @@ INSERT INTO `urun_ekle_log` (`log_id`, `urun_id`, `ekleyen_admin_id`, `eklenme_t
 (52, 51, NULL, '2025-05-18 18:14:50'),
 (53, 52, NULL, '2025-05-18 18:18:55'),
 (54, 53, NULL, '2025-05-18 18:21:40'),
-(55, 52, NULL, '2025-05-18 20:15:47');
+(55, 52, NULL, '2025-05-18 20:15:47'),
+(56, 53, NULL, '2025-05-18 21:35:16'),
+(57, 49, NULL, '2025-05-18 21:37:18'),
+(58, 49, NULL, '2025-05-18 21:40:41'),
+(59, 41, NULL, '2025-05-18 21:42:05'),
+(60, 50, NULL, '2025-05-18 21:42:43'),
+(61, 52, NULL, '2025-05-18 21:43:48'),
+(62, 45, NULL, '2025-05-18 21:45:23'),
+(63, 53, NULL, '2025-05-18 21:47:22'),
+(64, 51, NULL, '2025-05-18 21:48:25'),
+(65, 51, NULL, '2025-05-18 21:49:01'),
+(66, 51, NULL, '2025-05-18 21:49:20'),
+(67, 51, NULL, '2025-05-18 21:51:10'),
+(68, 52, NULL, '2025-05-18 21:51:50'),
+(69, 54, NULL, '2025-05-18 21:53:24'),
+(70, 54, NULL, '2025-05-18 21:53:53'),
+(71, 49, NULL, '2025-05-18 23:21:12'),
+(72, 55, NULL, '2025-05-20 22:59:11'),
+(73, 55, NULL, '2025-05-20 22:59:32');
 
 -- --------------------------------------------------------
 
@@ -370,15 +487,16 @@ CREATE TABLE `yorumlar` (
   `musteri_id` int(11) DEFAULT NULL,
   `kullanici_yorum` text DEFAULT NULL,
   `kullanici_puan` tinyint(4) DEFAULT NULL CHECK (`kullanici_puan` between 1 and 5),
-  `kullanici_yorum_tarihi` datetime DEFAULT current_timestamp()
+  `kullanici_yorum_tarihi` datetime DEFAULT current_timestamp(),
+  `admin_cevap` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
 --
 -- Tablo döküm verisi `yorumlar`
 --
 
-INSERT INTO `yorumlar` (`yorum_id`, `urun_id`, `musteri_id`, `kullanici_yorum`, `kullanici_puan`, `kullanici_yorum_tarihi`) VALUES
-(4, 45, 3, 'Harika bir küpe sevgilim çok beğendi', 5, '2025-05-18 20:02:06');
+INSERT INTO `yorumlar` (`yorum_id`, `urun_id`, `musteri_id`, `kullanici_yorum`, `kullanici_puan`, `kullanici_yorum_tarihi`, `admin_cevap`) VALUES
+(4, 45, 3, 'Harika bir küpe sevgilim çok beğendi', 5, '2025-05-18 20:02:06', 'Beğendiğinize Çok sevindik efendim');
 
 -- --------------------------------------------------------
 
@@ -414,6 +532,20 @@ ALTER TABLE `adminler`
 --
 ALTER TABLE `adresler`
   ADD PRIMARY KEY (`adres_id`),
+  ADD KEY `musteri_id` (`musteri_id`);
+
+--
+-- Tablo için indeksler `destek_mesajlari`
+--
+ALTER TABLE `destek_mesajlari`
+  ADD PRIMARY KEY (`mesaj_id`),
+  ADD KEY `talep_id` (`talep_id`);
+
+--
+-- Tablo için indeksler `destek_talepleri`
+--
+ALTER TABLE `destek_talepleri`
+  ADD PRIMARY KEY (`talep_id`),
   ADD KEY `musteri_id` (`musteri_id`);
 
 --
@@ -511,13 +643,25 @@ ALTER TABLE `adminler`
 -- Tablo için AUTO_INCREMENT değeri `adresler`
 --
 ALTER TABLE `adresler`
-  MODIFY `adres_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `adres_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- Tablo için AUTO_INCREMENT değeri `destek_mesajlari`
+--
+ALTER TABLE `destek_mesajlari`
+  MODIFY `mesaj_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- Tablo için AUTO_INCREMENT değeri `destek_talepleri`
+--
+ALTER TABLE `destek_talepleri`
+  MODIFY `talep_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `favoriler`
 --
 ALTER TABLE `favoriler`
-  MODIFY `favori_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `favori_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `kategoriler`
@@ -541,13 +685,13 @@ ALTER TABLE `sepet`
 -- Tablo için AUTO_INCREMENT değeri `siparisler`
 --
 ALTER TABLE `siparisler`
-  MODIFY `siparis_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `siparis_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `siparis_urunleri`
 --
 ALTER TABLE `siparis_urunleri`
-  MODIFY `siparis_urun_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `siparis_urun_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `stokhareketleri`
@@ -559,7 +703,7 @@ ALTER TABLE `stokhareketleri`
 -- Tablo için AUTO_INCREMENT değeri `urunler`
 --
 ALTER TABLE `urunler`
-  MODIFY `urun_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `urun_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `urunresimleri`
@@ -571,13 +715,13 @@ ALTER TABLE `urunresimleri`
 -- Tablo için AUTO_INCREMENT değeri `urun_ekle_log`
 --
 ALTER TABLE `urun_ekle_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- Tablo için AUTO_INCREMENT değeri `yorumlar`
 --
 ALTER TABLE `yorumlar`
-  MODIFY `yorum_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `yorum_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Dökümü yapılmış tablolar için kısıtlamalar
@@ -588,6 +732,18 @@ ALTER TABLE `yorumlar`
 --
 ALTER TABLE `adresler`
   ADD CONSTRAINT `adresler_ibfk_1` FOREIGN KEY (`musteri_id`) REFERENCES `musteriler` (`musteri_id`);
+
+--
+-- Tablo kısıtlamaları `destek_mesajlari`
+--
+ALTER TABLE `destek_mesajlari`
+  ADD CONSTRAINT `destek_mesajlari_ibfk_1` FOREIGN KEY (`talep_id`) REFERENCES `destek_talepleri` (`talep_id`);
+
+--
+-- Tablo kısıtlamaları `destek_talepleri`
+--
+ALTER TABLE `destek_talepleri`
+  ADD CONSTRAINT `destek_talepleri_ibfk_1` FOREIGN KEY (`musteri_id`) REFERENCES `musteriler` (`musteri_id`);
 
 --
 -- Tablo kısıtlamaları `favoriler`

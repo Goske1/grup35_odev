@@ -138,6 +138,9 @@ if (isset($_POST["giris"])) {
         <div class="register-link mt-3">
             Henüz hesabınız yok mu? <a href="kayit.php">Kayıt Olun</a>
         </div>
+        <div class="register-link mt-2">
+            <a href="sifre/sifre.sifirla.php">Şifrenizi mi unuttunuz? Sıfırlayın</a>
+        </div>
     </div>
 </body>
 </html>

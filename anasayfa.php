@@ -54,6 +54,17 @@ if ($sonuc) {
 } else {
     echo "<div class='alert alert-danger'>Sorgu hazırlanırken hata oluştu: " . mysqli_error($baglanti) . "</div>";
 }
+
+// Yeni destek mesajı bildirimi için değişken
+$okunmamis_admin_mesaj = 0;
+if (isset($_SESSION["musteri_id"])) {
+    $musteri_id = $_SESSION["musteri_id"];
+    $sorgu = "SELECT COUNT(*) as sayi FROM destek_mesajlari dm
+              JOIN destek_talepleri dt ON dm.talep_id = dt.talep_id
+              WHERE dt.musteri_id = $musteri_id AND dm.gonderen = 'yetkili' AND dm.okundu = 0";
+    $sonuc = mysqli_query($baglanti, $sorgu);
+    $okunmamis_admin_mesaj = mysqli_fetch_assoc($sonuc)['sayi'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="tr">
@@ -90,7 +101,11 @@ if ($sonuc) {
     </style>
 </head>
 <body>
-
+<?php if ($okunmamis_admin_mesaj > 0): ?>
+    <div class="alert alert-info text-center mb-0">
+        <strong>Yeni destek mesajınız var! <a href="Destek/destek.talepleri.php" class="alert-link">Görüntüle</a></strong>
+    </div>
+<?php endif; ?>
 <!-- Sayfanın UST kısmı  -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="#">Lüks Bijuteri</a>
@@ -118,13 +133,16 @@ if ($sonuc) {
                     </span>
                 <?php endif; ?>
             </a>
-            <a href="sepet/sepet.php" class="btn btn-outline-dark me-2 position-relative">
+            <a href="sepet/sepet.php" class="btn btn-outline-dark me-2 position-relative">                
                 <i class="fas fa-shopping-cart"></i>
                 <?php if (isset($_SESSION['sepet']) && count($_SESSION['sepet']) > 0): ?>
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                         <?= count($_SESSION['sepet']) ?>
                     </span>
                 <?php endif; ?>
+            </a>
+            <a href="#" class="btn btn-outline-primary me-2" data-toggle="modal" data-target="#destekTalepModal">
+                <i class="fas fa-headset"></i> Destek Talebi
             </a>
             <!-- Kullanıcı dropdown menüsü -->
             <?php if (isset($_SESSION["kullanici_ad_soyad"])): ?>
@@ -135,8 +153,9 @@ if ($sonuc) {
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li><a class="dropdown-item" href="profil.php"><i class="fas fa-user me-2"></i>Profilim</a></li>
-                        <li><a class="dropdown-item" href="siparis.durum.php"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
+                        <li><a class="dropdown-item" href="siparişlerim.php"><i class="fas fa-box me-2"></i>Siparişlerim</a></li>
                         <li><a class="dropdown-item" href="favori/favorilerim.php"><i class="fas fa-heart me-2"></i>Favorilerim</a></li>
+                        <li><a class="dropdown-item" href="Destek/destek.talepleri.php"><i class="fas fa-headset me-2"></i>Destek Taleplerim</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="çikis.php"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
                     </ul>
@@ -184,6 +203,47 @@ if ($sonuc) {
             </div>
         <?php endforeach; ?>
     </div>
+</div>
+
+<!-- DESTEK TALEP MODAL -->
+<div class="modal fade" id="destekTalepModal" tabindex="-1" aria-labelledby="destekTalepModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post" action="Destek/destek.talep.gonder.php">
+        <div class="modal-header">
+          <h5 class="modal-title" id="destekTalepModalLabel">Destek Talebi Oluştur</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <?php if (isset($_GET['talep']) && $_GET['talep'] == 'ok'): ?>
+                <div class="alert alert-success">Talebiniz başarıyla iletildi. En kısa sürede dönüş yapılacaktır.</div>
+            <?php endif; ?>
+            <div class="mb-3">
+                <label>Ad Soyad</label>
+                <input type="text" name="ad_soyad" class="form-control" required value="<?= htmlspecialchars($_SESSION['kullanici_ad_soyad'] ?? '') ?>">
+            </div>
+            <div class="mb-3">
+                <label>E-posta</label>
+                <input type="email" name="eposta" class="form-control" required value="<?= htmlspecialchars($_SESSION['kullanici_eposta'] ?? '') ?>">
+            </div>
+            <div class="mb-3">
+                <label>Konu</label>
+                <input type="text" name="konu" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Mesajınız</label>
+                <textarea name="mesaj" class="form-control" rows="4" required></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+          <button type="submit" class="btn btn-primary">Gönder</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 
 <!-- ALT BİLGİ -->
